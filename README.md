@@ -49,6 +49,10 @@ However, to do this a change needs to be made in the script. The `shell=True` fl
 rcloneCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "rclone-vfs.service"], shell=True)
 mergerFSCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "mergerfs.service"], shell=True)
 ```
+This is due to the use of `--user` flag with the `systemctl` command. The script needs to run the command in a shell to have access to the right environmental variables. Otherwise, the following error will be displayed,
+```
+Failed to connect to bus: No such file or directory
+```
 
 # Discord Embed
 
