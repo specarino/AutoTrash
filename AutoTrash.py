@@ -29,29 +29,9 @@ plex = PlexServer(baseurl, token)
 # Edit this line to change the path of the mount to start from root instead
 anchor = path.exists(path.expanduser('~') + anchorPath)
 
-if webhookURL:
-  webhook = DiscordWebhook(url=webhookURL)
-
 # Script
 # -----------------------------------------------------------------------------
 # This bit is for the discord embed, useful for logging during crontab use
-if webhookURL:
-  def printe(scriptStatus, anchorStatus, serviceStatus):
-
-    if scriptStatus == 'Success':
-      embedColor = '03b2f8'
-    else:
-      embedColor = 'f84903'
-
-    titleFull = 'Empty Trash Task: ' + scriptStatus + '!'
-    embed = DiscordEmbed(title=titleFull, description="Automatic emptying of trash for Plex based on remote mount's availability", color=embedColor)
-    embed.set_author(name='AutoTrash by specarino', url='https://github.com/specarino/AutoTrash/', icon_url='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/240px-Python-logo-notext.svg.png')
-    embed.set_timestamp()
-    embed.add_embed_field(name="Anchor File (through MergerFS)", value=anchorStatus, inline=False)
-    embed.add_embed_field(name="rclone & MergerFS Services", value=serviceStatus, inline=False)
-    webhook.add_embed(embed)
-    response = webhook.execute()
-
 scriptStatus = 'Failed'
 
 if anchor:
@@ -72,4 +52,22 @@ else:
     serviceStatus = ':x: Inactive'
 
 if webhookURL:
+  webhook = DiscordWebhook(url=webhookURL)
+  
+  def printe(scriptStatus, anchorStatus, serviceStatus):
+
+    if scriptStatus == 'Success':
+      embedColor = '03b2f8'
+    else:
+      embedColor = 'f84903'
+
+    titleFull = 'Empty Trash Task: ' + scriptStatus + '!'
+    embed = DiscordEmbed(title=titleFull, description="Automatic emptying of trash for Plex based on remote mount's availability", color=embedColor)
+    embed.set_author(name='AutoTrash by specarino', url='https://github.com/specarino/AutoTrash/', icon_url='https://github.com/specarino.png?size=48')
+    embed.set_timestamp()
+    embed.add_embed_field(name="Anchor File (through MergerFS)", value=anchorStatus, inline=False)
+    embed.add_embed_field(name="rclone & MergerFS Services", value=serviceStatus, inline=False)
+    webhook.add_embed(embed)
+    response = webhook.execute()
+    
   printe(scriptStatus, anchorStatus, serviceStatus)
