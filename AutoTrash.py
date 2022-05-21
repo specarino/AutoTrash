@@ -31,7 +31,6 @@ anchor = path.exists(path.expanduser('~') + anchorPath)
 
 # Script
 # -----------------------------------------------------------------------------
-# This bit is for the discord embed, useful for logging during crontab use
 scriptStatus = 'Failed'
 
 if anchor:
@@ -51,6 +50,7 @@ else:
   else:
     serviceStatus = ':x: Inactive'
 
+# This bit is for the discord embed, useful for logging during crontab use
 if webhookURL:
   webhook = DiscordWebhook(url=webhookURL)
   
