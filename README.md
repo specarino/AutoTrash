@@ -1,4 +1,4 @@
-![AutoTrash](https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash-128px.png)
+![AutoTrash](https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash-128px.png?raw=True)
 
 # AutoTrash
 A small Python script to trash unavailable files on Plex. Although Plex does this automatically, it does not check for if the remote mount is active. Therefore having it on has the possibility of completely wiping out all of the metadata if the mount link ever breaks.
@@ -12,6 +12,8 @@ Ensure that python3 and pip are installed on the machine. This script depends on
 pip install plexapi
 pip install discord-webhook
 ```
+
+Create an anchor file on the remote mount. For instance, `anchor.lock` was placed in the root of the remote for this script development.
 
 The following variables needs to be set for the script to work,
 - `baseurl`: The URL of the Plex server (SSL is recommended here)
@@ -47,3 +49,9 @@ However, to do this a change needs to be made in the script. The `shell=True` fl
 rcloneCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "rclone-vfs.service"], shell=True)
 mergerFSCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "mergerfs.service"], shell=True)
 ```
+
+# Discord Embed
+
+The following image shows the Discord embed working, the first log is when the trash was cleared due to remote mount availability, and the second log did not clear the trash due to lack of an anchor file.
+
+![AutoTrash Discord Embed Logs](https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash_Example.jpg?raw=True)
