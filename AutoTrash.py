@@ -8,7 +8,8 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 # Please ensure that the "anchor.lock" file is available in your mount's root (can change the path to anything)
 # It is recommended to use the path using MergerFS as then the anchor file will be unavailable if either services go down
 # -----------------------------------------------------------------------------
-# Input Plex token here
+# Input Plex URL and token
+baseurl = 'http://[PMS_IP_Address]:32400'
 token = 'TOKEN'
 # Path starts from home, this one is ~/MergerFS/anchor.lock
 anchorPath = "/MergerFS/anchor.lock"
@@ -23,7 +24,6 @@ mergerFSCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", 
 
 # Plex URL (SSL recommended), and Anchor file location
 # -----------------------------------------------------------------------------
-baseurl = 'http://[PMS_IP_Address]:32400'
 plex = PlexServer(baseurl, token)
 
 # Edit this line to change the path of the mount to start from root instead
