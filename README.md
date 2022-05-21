@@ -1,4 +1,4 @@
-![AutoTrash](https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash-128px.png?size=48)
+![AutoTrash](https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash-128px.png)
 
 # AutoTrash
 A small Python script to trash unavailable files on Plex. Although Plex does this automatically, it does not check for if the remote mount is active. Therefore having it on has the possibility of completely wiping out all of the metadata if the mount link ever breaks.
