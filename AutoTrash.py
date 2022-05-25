@@ -90,7 +90,7 @@ if DiscordWebhookURL:
     else:
       embedColor = 'f84903'
 
-    titleFull = 'Empty Trash Task: ' + scriptStatus + '!'
+    titleFull = f"Empty Trash Task: {scriptStatus}!"
     embed = DiscordEmbed(title=titleFull, description="Automatic emptying of trash for Plex based on remote mount's availability", color=embedColor)
     embed.set_author(name='specarino/AutoTrash', url='https://github.com/specarino/AutoTrash/', icon_url='https://github.com/specarino.png?size=48')
     embed.set_timestamp()
