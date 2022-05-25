@@ -34,7 +34,6 @@ scanStatus = ''
 # Does a Plex scan and waits for it to complete before proceeding
 # Delete between the two lines to remove this function
 # -----------------------------------------------------------------------------
-x = time.time()
 maxDelay = 1
 
 def cb(msg):
