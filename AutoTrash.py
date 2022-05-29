@@ -28,7 +28,6 @@ plex = PlexServer(baseurl, token)
 
 # Edit this line to change the path of the mount to start from root instead
 anchor = path.exists(path.expanduser('~') + anchorPath)
-scanStatus = ''
 
 # Script
 # -----------------------------------------------------------------------------
