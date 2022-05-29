@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import subprocess, time
+import subprocess
 from os import path
 from plexapi.server import PlexServer
 from discord_webhook import DiscordWebhook, DiscordEmbed
@@ -30,38 +30,10 @@ plex = PlexServer(baseurl, token)
 anchor = path.exists(path.expanduser('~') + anchorPath)
 scanStatus = ''
 
-# EXPERIMENTAL SECTION
-# Does a Plex scan and waits for it to complete before proceeding
-# Delete between the two lines to remove this function
+# Script
 # -----------------------------------------------------------------------------
-maxDelay = 1
-
-def cb(msg):
-    global x
-    x = time.time()
-    return x
-
-notifier = plex.startAlertListener(callback=cb)
-plex.library.update()
-
-# This bit needs further testing and work
-while True:
-    try:
-        notifier
-        time.sleep(1)
-        if time.time() - x > maxDelay:
-            scanStatus = ':white_check_mark: Complete'
-            break
-    except KeyboardInterrupt:
-        break
-
-notifier.stop()
-
-# -----------------------------------------------------------------------------
-if not scanStatus:
-    scanStatus = ':warning: Not setup, check GitHub for the code snippet'
-
 scriptStatus = 'Failed'
+
 if anchor:
   anchorStatus = ':white_check_mark: Available'
   # The subprocess.call returns a 0 if the service is active
@@ -94,7 +66,6 @@ if DiscordWebhookURL:
     embed = DiscordEmbed(title=titleFull, description="Automatic emptying of trash for Plex based on remote mount's availability", color=embedColor)
     embed.set_author(name='specarino/AutoTrash', url='https://github.com/specarino/AutoTrash/', icon_url='https://github.com/specarino.png?size=48')
     embed.set_timestamp()
-    embed.add_embed_field(name="Plex Library Scan", value=scanStatus, inline=False)
     embed.add_embed_field(name="Anchor File (through MergerFS)", value=anchorStatus, inline=False)
     embed.add_embed_field(name="rclone & MergerFS Services", value=serviceStatus, inline=False)
     webhook.add_embed(embed)
