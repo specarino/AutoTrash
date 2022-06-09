@@ -24,7 +24,11 @@ mergerFSCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", 
 
 # Plex URL (SSL recommended), and Anchor file location
 # -----------------------------------------------------------------------------
-plex = PlexServer(baseurl, token)
+try:
+  plex = PlexServer(baseurl, token)
+  plexStatus = ':white_check_mark: Online'
+except:
+  plexStatus = ':x: Offline'
 
 # Edit this line to change the path of the mount to start from root instead
 anchor = path.exists(path.expanduser('~') + anchorPath)
@@ -39,8 +43,9 @@ if anchor:
   if rcloneCheck == 0 and mergerFSCheck == 0:
     serviceStatus = ':white_check_mark: Active'
     # The API call to empty the trash for all the libraries
-    plex.library.emptyTrash()
-    scriptStatus = 'Success'
+    if plexStatus == ':white_check_mark: Online':
+      plex.library.emptyTrash()
+      scriptStatus = 'Success'
   else:
     serviceStatus = ':x: Inactive'
 else:
@@ -54,7 +59,7 @@ else:
 if DiscordWebhookURL:
   webhook = DiscordWebhook(url=DiscordWebhookURL, username='AutoTrash', avatar_url='https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash-128px.png?raw=True')
   
-  def printe(scriptStatus, anchorStatus, serviceStatus):
+  def printe(scriptStatus):
 
     if scriptStatus == 'Success':
       embedColor = '03b2f8'
@@ -65,9 +70,10 @@ if DiscordWebhookURL:
     embed = DiscordEmbed(title=titleFull, description="Automatic emptying of trash for Plex based on remote mount's availability", color=embedColor)
     embed.set_author(name='specarino/AutoTrash', url='https://github.com/specarino/AutoTrash/', icon_url='https://github.com/specarino.png?size=48')
     embed.set_timestamp()
+    embed.add_embed_field(name="Plex Media Server", value=plexStatus, inline=False)
     embed.add_embed_field(name="Anchor File (through MergerFS)", value=anchorStatus, inline=False)
     embed.add_embed_field(name="rclone & MergerFS Services", value=serviceStatus, inline=False)
     webhook.add_embed(embed)
     response = webhook.execute()
     
-  printe(scriptStatus, anchorStatus, serviceStatus)
+  printe(scriptStatus)
