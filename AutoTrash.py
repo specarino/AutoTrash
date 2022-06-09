@@ -2,6 +2,7 @@
 
 import subprocess
 from os import path
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from plexapi.server import PlexServer
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
@@ -15,12 +16,20 @@ token = 'TOKEN'
 anchorPath = "/MergerFS/anchor.lock"
 # Leave empty to not use Discord for logging. Paste in the webhook URL if it is in use.
 DiscordWebhookURL = ''
+# Use your Discord User ID to allow pinging by the webhook during failures
+DiscordUserID = ''
+
+# Parse command line arguments
+# -----------------------------------------------------------------------------
+parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("-s", "--shell", action='store_true', help="Invoke a shell, used for cron")
+args = parser.parse_args()
 
 # This is used to check the the rclone and MergerFS services are running on the machine
 # -----------------------------------------------------------------------------
-# shell=True needs to be used if this script is in use with a crontab. Use shell=False if you are executing it from a terminal
-rcloneCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "rclone-vfs.service"], shell=False)
-mergerFSCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "mergerfs.service"], shell=False)
+# Pass the "-s" or "--shell" argument to be use this script with crontab
+rcloneCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "rclone-vfs.service"], shell=args.shell)
+mergerFSCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "mergerfs.service"], shell=args.shell)
 
 # Plex URL (SSL recommended), and Anchor file location
 # -----------------------------------------------------------------------------
@@ -57,14 +66,19 @@ else:
 
 # This bit is for the discord embed, useful for logging during crontab use
 if DiscordWebhookURL:
-  webhook = DiscordWebhook(url=DiscordWebhookURL, username='AutoTrash', avatar_url='https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash-128px.png?raw=True')
-  
+  webhookAvatar = 'https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash-128px.png?raw=True'
+  defaultWebhook = DiscordWebhook(url=DiscordWebhookURL, username='AutoTrash', avatar_url=webhookAvatar, content=f"Empty Trash Task: **{scriptStatus}**!")
+  mentionWebhook = DiscordWebhook(url=DiscordWebhookURL, username='AutoTrash', avatar_url=webhookAvatar, content=f"<@{DiscordUserID}> Empty Trash Task: **{scriptStatus}**!")
+
   def printe(scriptStatus):
+    webhook = defaultWebhook
 
     if scriptStatus == 'Success':
       embedColor = '03b2f8'
     else:
       embedColor = 'f84903'
+      if DiscordUserID:
+        webhook = mentionWebhook
 
     titleFull = f"Empty Trash Task: {scriptStatus}!"
     embed = DiscordEmbed(title=titleFull, description="Automatic emptying of trash for Plex based on remote mount's availability", color=embedColor)
@@ -74,6 +88,6 @@ if DiscordWebhookURL:
     embed.add_embed_field(name="Anchor File (through MergerFS)", value=anchorStatus, inline=False)
     embed.add_embed_field(name="rclone & MergerFS Services", value=serviceStatus, inline=False)
     webhook.add_embed(embed)
-    response = webhook.execute()
+    webhook.execute()
     
   printe(scriptStatus)

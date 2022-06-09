@@ -19,7 +19,8 @@ The following variables needs to be set for the script to work,
 - `baseurl`: The URL of the Plex server (SSL is recommended here)
 - `token`: Obtained by viewing the XML of a media and taking the token off of the URL
 - `anchorPath`: File name and location of the anchor file on the mount/merged folder (suggested to use the merged folder)
-- `webhookURL`: A Discord webhook URL, can be left blank too
+- `DiscordWebhookURL`: A Discord webhook URL, can be left blank too
+- `DiscordUserID`: Discord account's ID (used to ping the user), can be left blank too
 
 # Configuration
 
@@ -31,24 +32,21 @@ chmod +x AutoTrash.py
 ./AutoTrash.py
 ```
 
-This will only work if the following lines have `shell=False` set,
+```
+usage: AutoTrash.py [-h] [-s]
 
-```python
-rcloneCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "rclone-vfs.service"], shell=False)
-mergerFSCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "mergerfs.service"], shell=False)
+optional arguments:
+  -h, --help   show this help message and exit
+  -s, --shell  Invoke a shell, used for cron (default: False)
 ```
 
 ## Using cron setup
 This is the recommended way of setting this up. For instance, this is how it is setup to run every 15 minutes. [crontab.guru](https://crontab.guru/) can be used to easily obtain the necessary interval.
 ```
-*/15 * * * * /home/username/AutoTrash.py >> /dev/null 2>&1
+*/15 * * * * /home/username/AutoTrash.py -s >> /dev/null 2>&1
 ```
-However, to do this a change needs to be made in the script. The `shell=True` flag needs to be used during the `subprocess.call`
+Ensure the use of `-s` or `--shell`, as the `shell=True` flag needs to be used during the `subprocess.call`
 
-```python
-rcloneCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "rclone-vfs.service"], shell=True)
-mergerFSCheck = subprocess.call(["systemctl", "--user", "--quiet", "is-active", "mergerfs.service"], shell=True)
-```
 This is due to the use of `--user` flag with the `systemctl` command. The script needs to run the command in a shell to have access to the right environmental variables. Otherwise, the following error will be displayed,
 ```
 Failed to connect to bus: No such file or directory
@@ -58,4 +56,4 @@ Failed to connect to bus: No such file or directory
 
 The following image shows the Discord embed working, the first log is when the trash was cleared due to remote mount availability, and the second log did not clear the trash due to lack of an anchor file.
 
-![AutoTrash Discord Embed Logs](https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash_Example.jpg?raw=True)
+![AutoTrash Discord Embed Logs](https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash_Example_V2.jpg?raw=True)
