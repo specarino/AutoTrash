@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import subprocess
 from os import path
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
@@ -23,6 +24,7 @@ DiscordUserID = ''
 # -----------------------------------------------------------------------------
 parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("-s", "--shell", action='store_true', help="Invoke a shell, used for cron")
+parser.add_argument("-q", "--quiet", action='store_true', help="Suppress Discord notification on success")
 args = parser.parse_args()
 
 # This is used to check the the rclone and MergerFS services are running on the machine
@@ -74,6 +76,8 @@ if DiscordWebhookURL:
     webhook = defaultWebhook
 
     if scriptStatus == 'Success':
+      if args.quiet:
+        sys.exit()
       embedColor = '03b2f8'
     else:
       embedColor = 'f84903'

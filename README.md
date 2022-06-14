@@ -35,11 +35,12 @@ chmod +x AutoTrash.py
 ```
 
 ```
-usage: AutoTrash.py [-h] [-s]
+usage: AutoTrash.py [-h] [-s] [-q]
 
 optional arguments:
   -h, --help   show this help message and exit
   -s, --shell  Invoke a shell, used for cron (default: False)
+  -q, --quiet  Suppress Discord notification on success (default: False)
 ```
 
 ## Using cron setup
@@ -50,13 +51,16 @@ This is the recommended way of setting this up. For instance, this is how it is 
 Ensure the use of `-s` or `--shell`, as the `shell=True` flag needs to be used during the `subprocess.call`
 
 This is due to the use of `--user` flag with the `systemctl` command. The script needs to run the command in a shell to have access to the right environmental variables. Otherwise, the following error will be displayed,
+
 ```
 Failed to connect to bus: No such file or directory
 ```
 
+The `-q` or `--quiet` flag can be used to stop Discord messages going through for when the script works properly. Only the errors will be sent to Discord.
+
 # Discord Embed
 
-The following image shows the Discord embed working, the first log is when the trash was cleared due to remote mount availability, and the second log did not clear the trash due to lack of an anchor file.
+The following image shows the Discord embed working, the first log is when the trash was cleared due to remote mount availability, and the second log did not clear the trash due to lack of an anchor file and PMS being offline.
 
 <p align="center">
   <img src="https://github.com/specarino/AutoTrash/blob/main/assets/AutoTrash_Example_V2.jpg?raw=True">
